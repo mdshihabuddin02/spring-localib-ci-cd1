@@ -40,8 +40,8 @@ pipeline {
             steps {
                 script {
                         sh "sed -i 's/TAG/${DOCKER_IMAGE_TAG}/g' app-deployment.yml"
-                        sh '/usr/bin/kubectl apply -f app-deployment.yml'
-                        sh '/usr/bin/kubectl apply -f app-svc.yml'
+                        sh '/usr/local/bin/kubectl apply -f app-deployment.yml'
+                        sh '/usr/local/bin/kubectl apply -f app-svc.yml'
                 }
             }
         }
