@@ -4,6 +4,7 @@ pipeline {
             maven 'mvn3'
             jdk 'jdk11'
         }
+
     environment {
                 DOCKER_REGISTRY = 'https://index.docker.io/v1/'
                 DOCKER_IMAGE_NAME = 'mdshihabuddin/locallibrary'
