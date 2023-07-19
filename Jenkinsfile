@@ -1,6 +1,6 @@
 pipeline {
     agent any
-        tools{
+        tools {
             maven 'mvn3'
             jdk 'jdk11'
         }
@@ -33,11 +33,9 @@ pipeline {
         stage('Deploy stage') {
             steps {
                 script {
-                    kubeconfig(credentialsId: 'kubeconf' ) {
-                    sh "sed -i 's/TAG/${DOCKER_IMAGE_TAG}/g' app-deployment.yml" 
-                    sh "/usr/bin/kubectl apply -f app-deployment.yml"
-                    sh "/usr/bin/kubectl apply -f app-svc.yml"
-                }
+                        sh "sed -i 's/TAG/${DOCKER_IMAGE_TAG}/g' app-deployment.yml"
+                        sh '/usr/bin/kubectl apply -f app-deployment.yml'
+                        sh '/usr/bin/kubectl apply -f app-svc.yml'
                 }
             }
         }
