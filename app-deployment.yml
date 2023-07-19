@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: post-app
+  template:
+    metadata:
+      labels:
+        app: post-app
+    spec:
+      containers:
+        - name: post-app
+          image: mdshihabuddin/locallibrary:TAG
+          ports:
+            - containerPort: 7000
