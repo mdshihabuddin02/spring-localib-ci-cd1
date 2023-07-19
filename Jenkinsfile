@@ -17,6 +17,12 @@ pipeline {
                 git branch: 'br1', credentialsId: 'git-credential', url: 'https://github.com/mdshihabuddin10/pro-spring1'
             }
         }
+        stage("Maven Build"){
+            steps{
+                sh "mvn clean package"
+                sh "mv target/*.war target/app.war"
+            }
+        }
 
         stage('Build and Push Docker Image') {
             steps {
