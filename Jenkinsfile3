@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+        tools {
+            maven 'mvn3'
+            jdk 'jdk11'
+        }
+
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'br1', credentialsId: 'git-credential', url: 'https://github.com/mdshihabuddin10/pro-spring1'
+            }
+        }
+
+        stage('Vault') {
+            steps {
+                withVault(configuration: [timeout: 60, vaultCredentialId: 'vault1', vaultUrl: 'http://192.168.0.168:8200'], vaultSecrets: [[path: 'kv/hello', secretValues: [[isRequired: false, vaultKey: 'springdbuser'], [isRequired: false, vaultKey: 'springdbpass'], [isRequired: false, vaultKey: 'cloudconstring']]]]) {
+                    // some block
+                    sh "sed -i 's|MYCON|${cloudconstring}|g' src/main/resources/application.properties"
+                    sh "sed -i 's/MYDBUSER/${springdbuser}/g' src/main/resources/application.properties"
+                    sh "sed -i 's/MYDBPASS/${springdbpass}/g' src/main/resources/application.properties"
+                }
+            }
+        }
+
+        stage('Maven Build') {
+            steps {
+                script {
+                sh "cat src/main/resources/application.properties"
+                sh 'mvn clean package'
+                sh 'mv target/*.jar target/app.jar'
+            }
+            }
+        }
+
+        stage('Deploy stage') {
+            steps {
+                script {
+                    sshagent(['aws1']) {
+                        // some block
+                        sh "ssh -o StrictHostKeyChecking=no ubuntu@34.212.87.76 'sudo systemctl stop springapp.service'"
+                        sh 'scp -o StrictHostKeyChecking=no target/app.jar ubuntu@34.212.87.76:/home/ubuntu/springapplication'
+                        sh "ssh -o StrictHostKeyChecking=no ubuntu@34.212.87.76 'sudo systemctl start springapp.service'"
+                    }
+                }
+            }
+        }
+    }
+}
